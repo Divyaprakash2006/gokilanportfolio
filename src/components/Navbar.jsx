@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { NavLink } from 'react-router-dom'
 import { motion, AnimatePresence } from 'framer-motion'
 import { HiMenu, HiX } from 'react-icons/hi'
@@ -78,6 +78,34 @@ const dotVariants = {
 export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false)
   const [scrolled, setScrolled] = useState(false)
+  const [isPlaying, setIsPlaying] = useState(false)
+  const audioRef = useRef(null)
+
+  // Initialize audio once
+  useEffect(() => {
+    const audio = new Audio('/Aylex - Option (freetouse.com).mp3')
+    audio.loop = true
+    audio.volume = 0.5
+    audio.addEventListener('ended', () => setIsPlaying(false))
+    audioRef.current = audio
+    return () => {
+      audio.pause()
+      audio.src = ''
+    }
+  }, [])
+
+  const toggleBGM = (e) => {
+    e.preventDefault()  // don't navigate — just toggle music
+    const audio = audioRef.current
+    if (!audio) return
+    if (isPlaying) {
+      audio.pause()
+      setIsPlaying(false)
+    } else {
+      audio.play()
+      setIsPlaying(true)
+    }
+  }
 
   const navLinks = [
     { name: 'Home', path: '/' },
@@ -105,9 +133,10 @@ export default function Navbar() {
       }`}
     >
       <div className="max-w-7xl mx-auto px-6 md:px-12 flex justify-between items-center">
-        <NavLink
-          to="/"
+        <span
+          onClick={toggleBGM}
           className="text-2xl font-bold font-display cursor-pointer tracking-wider text-white select-none"
+          title={isPlaying ? 'Pause BGM' : 'Play BGM'}
         >
           <motion.span
             variants={containerVariants}
@@ -125,14 +154,26 @@ export default function Navbar() {
                 {letter}
               </motion.span>
             ))}
-            <motion.span
-              variants={dotVariants}
-              className="inline-block ml-0.5 font-sans"
-            >
-              .
-            </motion.span>
+            {/* Dot with playing pulse */}
+            <span className="relative inline-flex items-center ml-0.5">
+              {isPlaying && (
+                <motion.span
+                  initial={{ opacity: 0, scale: 0.5 }}
+                  animate={{ opacity: [0.6, 0, 0.6], scale: [1, 2.2, 1] }}
+                  transition={{ repeat: Infinity, duration: 1.6, ease: 'easeInOut' }}
+                  className="absolute inset-0 rounded-full bg-indigo-400/40 pointer-events-none"
+                />
+              )}
+              <motion.span
+                variants={dotVariants}
+                className="inline-block font-sans relative z-10"
+                style={{ color: isPlaying ? '#22d3ee' : undefined }}
+              >
+                .
+              </motion.span>
+            </span>
           </motion.span>
-        </NavLink>
+        </span>
 
         {/* Desktop nav */}
         <nav className="hidden md:flex items-center space-x-8">
