@@ -11,7 +11,7 @@ export const projectsData = [
     detailedDescription: "The Smart Leave Management System automates student leave workflows. It features role-based dashboards for Students, Advisors, and HODs. Built with the MERN stack, the application handles user authentication, leave applications, status tracking, and sends real-time email notifications utilizing Nodemailer.",
     image: aiDashboardImg,
     githubLink: "https://github.com",
-    demoLink: "#"
+    demoLink: "https://leave-2t9d.onrender.com/"
   },
   {
     id: 2,
